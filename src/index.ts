@@ -4,12 +4,13 @@ import * as http from 'node:http';
 import { getHandler } from './handlers/getHandler';
 import { postHandler } from './handlers/postHandler';
 import { putHandler } from './handlers/putHandler';
+import { deleteHandler } from './handlers/deleteHandler';
 
 config();
 
 const PORT = process.env.PORT || 4000;
 const database = new Database();
-database.initUsers(5);
+database.initUsers(3);
 
 //single
 const server = http.createServer((req, res) => {
@@ -26,7 +27,7 @@ const server = http.createServer((req, res) => {
         putHandler(req, res, database);
         break;
       case 'DELETE':
-        getHandler(req, res, database);
+        deleteHandler(req, res, database);
         break;
       default:
         res.statusCode = 500;

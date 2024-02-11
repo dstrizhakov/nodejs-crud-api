@@ -1,3 +1,4 @@
+import { log } from 'node:console';
 import { IUser } from '../models/IUser';
 import { v4, validate } from 'uuid';
 
@@ -41,11 +42,10 @@ export class Database {
   deleteUser(id: string) {
     const userToDeleteIndex = this.users.findIndex((user) => user.id === id);
     if (userToDeleteIndex >= 0) {
-      this.users.filter((user) => user.id !== id);
-      console.log(`User id = ${id} was deleted`);
-    } else {
-      console.error(`User id = ${id} not found in database`);
+      this.users = this.users.filter((user) => user.id !== id);
+      return true;
     }
+    return false;
   }
 
   deleteUsers() {
@@ -55,14 +55,14 @@ export class Database {
   updateUser(id: string, user: Omit<IUser, 'id'>) {
     const userToUpdateIndex = this.users.findIndex((user) => user.id === id);
     if (userToUpdateIndex >= 0) {
-      this.users[userToUpdateIndex] = {
+      const updatedUser = {
         id,
         ...user,
       };
-      console.log(`User id = ${id} updated`);
-    } else {
-      console.error(`User id = ${id} not found in database`);
+      this.users[userToUpdateIndex] = updatedUser;
+      return updatedUser;
     }
+    return null;
   }
 
   isUuid(uuid: string) {
