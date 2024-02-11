@@ -5,7 +5,7 @@ import { postHandler } from './handlers/postHandler';
 import { putHandler } from './handlers/putHandler';
 import { deleteHandler } from './handlers/deleteHandler';
 
-export const single = async(port: number, database: Database) => {
+export const single = async(host: string, port: number, database: Database) => {
 
     const server = http.createServer((req, res) => {
         res.setHeader('Content-type', 'application/json');
@@ -34,7 +34,7 @@ export const single = async(port: number, database: Database) => {
       });
       
       server.listen(port, () => {
-        console.log(`Server running at http://localhost:${port}/`);
+        console.log(`Server running at http://${host}:${port}/`);
       });
       return () => server.close();
 } 
