@@ -6,18 +6,22 @@ export class Database {
 
   initUsers(count: number) {
     for (let i = 0; i < count; i++) {
-      const user: IUser = { id: v4(), username: 'user ' + i, age: 20 + i, hobbies: [] };
+      const user: IUser = { id: v4(), username: 'user ' + i, age: 20 + i, hobbies: ['fishing', 'drinking'] };
       this.addUser(user);
     }
   }
 
-  addUser(user: IUser) {
-    const userToAddIndex = this.users.findIndex((userDb) => userDb.id === user.id);
-    if (userToAddIndex >= 0) {
-      console.error(`User id = ${user.id} is already exits in database`);
-    } else {
-      this.users.push(user);
+  addUser(user: Omit<IUser, 'id'>) {
+    if (this.isUserCorrect(user)) {
+      const uuid = v4();
+      const newUser = {
+        id: uuid,
+        ...user,
+      };
+      this.users.push(newUser);
+      return newUser;
     }
+    return null;
   }
 
   getUser(id: string) {
@@ -63,5 +67,12 @@ export class Database {
 
   isUuid(uuid: string) {
     return validate(uuid);
+  }
+
+  isUserCorrect(user: Omit<IUser, 'id'>) {
+    const isUsername = user?.username;
+    const isAge = user?.age && typeof Number(user?.age) === 'number';
+    const isHobbies = Array.isArray(user?.hobbies);
+    return isUsername && isAge && isHobbies;
   }
 }
