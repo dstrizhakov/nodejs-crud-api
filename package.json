@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "dev": "nodemon src/index.ts --multu",
-    "build": "tcs && node dist/index.js",
+    "start:dev": "nodemon src/index.ts",
+    "start:prod": "tcs && node dist/index.js",
+    "start:multi": "nodemon src/index.ts --multi",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"src/**/*.ts\" --fix"
   },
