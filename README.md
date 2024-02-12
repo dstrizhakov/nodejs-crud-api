@@ -35,7 +35,7 @@ npm run test
 ```
 ### Check application by ESlint:
 ```sh
-   npm run lint
+npm run lint
 ```
 ### Check and fix code by Prettier
 ```sh
