@@ -1,6 +1,5 @@
 import { Database } from 'Database/Database';
 import http from 'node:http';
-import { loadavg } from 'node:os';
 import path from 'node:path';
 
 export const putHandler = (

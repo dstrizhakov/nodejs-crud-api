@@ -1,4 +1,4 @@
-import { config, populate } from 'dotenv';
+import { config } from 'dotenv';
 import { Database } from './Database/Database';
 import { single } from './single';
 import { LoadBalancer } from './multi';

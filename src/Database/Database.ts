@@ -1,4 +1,3 @@
-import { log } from 'node:console';
 import { IUser } from '../models/IUser';
 import { v4, validate } from 'uuid';
 

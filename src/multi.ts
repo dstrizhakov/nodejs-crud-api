@@ -40,7 +40,7 @@ export class LoadBalancer {
             hostname: this.host,
             port: this.currentPort,
             path: req.url,
-            method: req.method
+            method: req.method,
           },
           (balansingResp) => {
             if (this.currentPort >= this.initPort + this.parallelism - 1) {
