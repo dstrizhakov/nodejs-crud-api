@@ -1,7 +1,8 @@
 import { config, populate } from 'dotenv';
 import { Database } from './Database/Database';
 import { single } from './single';
-import { multi } from './multi';
+import { LoadBalancer } from './multi';
+import { availableParallelism } from 'node:os';
 
 config();
 
@@ -13,7 +14,8 @@ database.initUsers(3);
 const args = process.argv;
 
 if (args[2] === '--multi') {
-  multi(HOST, PORT, database);
+  const parallelism = availableParallelism() - 1;
+  new LoadBalancer(parallelism, HOST, PORT, database);
 } else {
   single(HOST, PORT, database);
 }

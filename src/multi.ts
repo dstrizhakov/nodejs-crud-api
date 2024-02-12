@@ -4,28 +4,52 @@ import * as http from 'node:http';
 import { Database } from 'Database/Database';
 import { single } from './single';
 
-export const multi = (host: string, port: number, database: Database) => {
-  const initialPort = port;
-  if (cluster.isPrimary) {
-    const parallelism = availableParallelism() - 1;
-    for (let i = 1; i < parallelism; i++) {
-      cluster.fork({ CLUSTER_PORT: port + i });
-    }
+export class LoadBalancer {
+  public parallelism: number;
+  public initPort: number;
+  public host: string;
+  private currentPort: number;
+  private database: Database;
 
+  constructor(parallelism: number, host: string, initPort: number, database: Database) {
+    this.parallelism = parallelism;
+    this.initPort = initPort;
+    this.host = host;
+    this.currentPort = initPort + 1;
+    this.database = database;
+    this.init();
+  }
+
+  private init() {
+    if (cluster.isPrimary) {
+      for (let i = 1; i < this.parallelism; i++) {
+        cluster.fork({ CLUSTER_PORT: this.initPort + i });
+      }
+      this.startLoadBalancer();
+    } else {
+      const clusterPort = Number(process.env.CLUSTER_PORT || this.initPort);
+      single(this.host, clusterPort, this.database);
+    }
+  }
+
+  private async startLoadBalancer() {
     const loadBalancer = http.createServer((req, res) => {
+      res.setHeader('Content-type', 'application/json');
       try {
-        const balansingPort = port + 1 === initialPort + parallelism + 1 ? initialPort + 1 : port + 1;
         const balansingRequest = http.request(
           {
-            hostname: host,
-            port: balansingPort,
+            hostname: this.host,
+            port: this.currentPort,
             path: req.url,
-            method: req.method,
-            headers: {
-              'Content-type': 'application/json',
-            },
+            method: req.method
           },
           (balansingResp) => {
+            if (this.currentPort >= this.initPort + this.parallelism - 1) {
+              this.currentPort = this.initPort + 1;
+            } else {
+              this.currentPort += 1;
+            }
+            console.log(`Piping balansingResp to http://localhost:${this.currentPort}`);
             balansingResp.pipe(res);
           },
         );
@@ -35,12 +59,8 @@ export const multi = (host: string, port: number, database: Database) => {
         res.end(JSON.stringify({ message: (error as Error).message }));
       }
     });
-
-    loadBalancer.listen(port, () => {
-      console.log(`Server running at http://localhost:${port}`);
+    loadBalancer.listen(this.initPort, () => {
+      console.log(`Server running at http://localhost:${this.initPort}`);
     });
-  } else {
-    const clusterPort = Number(process.env.CLUSTER_PORT || port);
-    single(host, clusterPort, database);
   }
-};
+}
