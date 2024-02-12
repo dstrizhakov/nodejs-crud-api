@@ -29,7 +29,6 @@ export class Database {
     if (userToGetIndex >= 0) {
       return this.users.find((user) => user.id === id);
     } else {
-      console.error(`User id = ${id} not found in database`);
       return null;
     }
   }

@@ -11,7 +11,6 @@ export const deleteHandler = (
   switch (true) {
     case url?.startsWith('/api/users/'):
       const uuid = path.basename(url as string);
-      console.log(uuid);
       if (database.isUuid(uuid)) {
         const result = database.deleteUser(uuid);
         if (result) {

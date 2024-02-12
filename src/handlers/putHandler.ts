@@ -22,7 +22,6 @@ export const putHandler = (
             .on('end', () => {
               const updateUserData = JSON.parse(body.toString());
               const updated = database.updateUser(uuid, updateUserData);
-              console.log(updated);
               if (updated) {
                 res.statusCode = 201;
                 res.end(JSON.stringify(updated));
