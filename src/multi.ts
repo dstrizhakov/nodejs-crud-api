@@ -1,5 +1,4 @@
 import cluster from 'node:cluster';
-import { availableParallelism } from 'node:os';
 import * as http from 'node:http';
 import { Database } from 'Database/Database';
 import { single } from './single';
