@@ -9,7 +9,7 @@ config();
 const PORT = Number(process.env.PORT) || 3000;
 const HOST = `localhost`;
 const database = new Database();
-database.initUsers(3);
+// database.initUsers(3); // you can generate users if it needed
 
 const args = process.argv;
 
